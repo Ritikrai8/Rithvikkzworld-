@@ -1,0 +1,3637 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineWorld | Premium Movie Streaming</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Swiper JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <style>
+        /* CSS Reset & Base Styles */
+        :root {
+            --galactic-black: #0A0A0A;
+            --primary-surface: #10141f;
+            --electric-blue: #00BFFF;
+            --cyber-pink: #FF007F;
+            --cosmic-purple: #9D00FF;
+            --starlight-white: #EAEAEA;
+            --warning-red: #FF2D2D;
+            --glass-blur: blur(20px);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.4s ease;
+            --transition-slow: 0.8s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Preloader Styles */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--galactic-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+
+        .preloader-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--electric-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: logoGlitch 2s infinite alternate;
+        }
+
+        @keyframes logoGlitch {
+            0%, 100% { 
+                text-shadow: 0 0 5px var(--electric-blue); 
+                transform: translate(0);
+            }
+            20% {
+                text-shadow: 5px 0 10px var(--cyber-pink);
+                transform: translate(-5px, 5px);
+            }
+            40% {
+                text-shadow: -5px 0 10px var(--cosmic-purple);
+                transform: translate(5px, -5px);
+            }
+            60% {
+                text-shadow: 5px 0 15px var(--cyber-pink), 
+                            -5px 0 15px var(--cosmic-purple);
+                transform: translate(-5px, 0);
+            }
+            80% {
+                text-shadow: 0 0 20px var(--electric-blue);
+                transform: translate(0, 5px);
+            }
+        }
+
+        .preloader-bar {
+            width: 300px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preloader-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--cosmic-purple));
+            animation: loading 3s ease-in-out forwards;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            20% { width: 20%; }
+            40% { width: 45%; }
+            60% { width: 70%; }
+            80% { width: 90%; }
+            100% { width: 100%; }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(0, 191, 255, 0.5);
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--electric-blue);
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%);
+            transition: transform 0.4s ease, width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+            opacity: 0.3;
+        }
+
+        .cursor-active {
+            transform: translate(-50%, -50%) scale(1.5);
+            background-color: var(--cyber-pink);
+        }
+
+        .cursor-follower-active {
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0.8;
+            border-color: var(--cyber-pink);
+        }
+
+        .cursor-click {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        /* Body Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--galactic-black);
+            color: var(--starlight-white);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            cursor: none;
+        }
+
+        body.light-theme {
+            --galactic-black: #f5f5f5;
+            --primary-surface: #e0e5f0;
+            --starlight-white: #1a1a1a;
+            background-color: var(--galactic-black);
+        }
+
+        body.light-theme header,
+        body.light-theme .search-filter,
+        body.light-theme .movie-card,
+        body.light-theme .footer-column h3::after {
+            background: rgba(224, 229, 240, 0.9);
+        }
+
+        body.light-theme .search-input {
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
+        }
+
+        body.light-theme .filter-btn {
+            background: rgba(255, 0, 127, 0.05);
+            color: #333;
+        }
+
+        body.light-theme .footer-links a,
+        body.light-theme .info-item,
+        body.light-theme .copyright {
+            color: #333;
+        }
+
+        body.light-theme .social-link {
+            background: rgba(0, 191, 255, 0.05);
+            color: #333;
+        }
+
+        body.light-theme .action-btn.details,
+        body.light-theme .slide-btn.download {
+            border-color: #666;
+            color: #333;
+        }
+
+        /* Starfield Background Animation */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .star {
+            position: absolute;
+            background-color: var(--starlight-white);
+            border-radius: 50%;
+            animation: twinkle var(--duration, 5s) infinite ease-in-out;
+            opacity: var(--opacity, 0.8);
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(16, 20, 31, 0.7);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+            transition: all var(--transition-medium);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--electric-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            animation: logoGlow 3s infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { 
+                text-shadow: 0 0 5px var(--electric-blue); 
+            }
+            50% {
+                text-shadow: 0 0 15px var(--electric-blue), 
+                             0 0 30px var(--cosmic-purple);
+            }
+            100% {
+                text-shadow: 0 0 5px var(--electric-blue),
+                             0 0 20px var(--cyber-pink);
+            }
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin: 0 1rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--starlight-white);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links a:hover {
+            color: var(--electric-blue);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--electric-blue), var(--cosmic-purple));
+            transition: width var(--transition-fast);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--starlight-white);
+            font-size: 1.2rem;
+            cursor: none;
+            transition: all var(--transition-fast);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        .theme-toggle:hover {
+            color: var(--electric-blue);
+            transform: rotate(30deg);
+            background: rgba(0, 191, 255, 0.2);
+            box-shadow: 0 0 10px var(--electric-blue);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--starlight-white);
+            font-size: 1.5rem;
+            cursor: none;
+            z-index: 1001;
+            transition: all var(--transition-fast);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 0, 127, 0.1);
+        }
+
+        .menu-toggle:hover {
+            color: var(--cyber-pink);
+            background: rgba(255, 0, 127, 0.2);
+            box-shadow: 0 0 10px var(--cyber-pink);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: rgba(16, 20, 31, 0.95);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-left: 1px solid rgba(0, 191, 255, 0.2);
+            z-index: 1000;
+            padding: 6rem 2rem 2rem;
+            transition: right var(--transition-medium);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav-links a {
+            color: var(--starlight-white);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all var(--transition-fast);
+            display: block;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(234, 234, 234, 0.1);
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--electric-blue);
+            padding-left: 0.5rem;
+        }
+        
+        /* Search & Filter Bar */
+        .search-filter {
+            background: var(--primary-surface);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 70px; /* Header ki height */
+            z-index: 900;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.5rem 0.8rem 3rem;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--starlight-white);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 15px var(--electric-blue);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--electric-blue);
+            font-size: 1.1rem;
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-btn {
+            background: rgba(255, 0, 127, 0.1);
+            color: var(--starlight-white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--cyber-pink);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            cursor: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 0, 127, 0.2);
+            box-shadow: 0 0 15px var(--cyber-pink);
+        }
+
+        .filter-btn i {
+            font-size: 1rem;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--primary-surface);
+            border-radius: 10px;
+            padding: 1.5rem;
+            width: 550px; /* Dropdown ko thoda chauda kiya */
+            max-width: 90vw; /* Screen se bahar na jaye */
+            max-height: 75vh; /* Lambai ko limit kiya */
+            overflow-y: auto; /* Agar phir bhi lamba ho to scrollbar aaye */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all var(--transition-fast);
+            display: grid; /* Sabse important change */
+            grid-template-columns: repeat(2, 1fr); /* 2-column layout */
+            gap: 1.5rem; /* Columns ke beech mein gap */
+        }
+
+        /* Lambe filter sections ko scrollable banane ke liye */
+        #genreFilters, #yearFilters {
+            max-height: 300px; /* Inki maximum height set ki */
+            overflow-y: auto;  /* Vertical scrollbar add kiya */
+            padding-right: 10px; /* Scrollbar ke liye thodi jagah */
+        }
+
+        /* Scrollbar ko futuristic look dene ke liye (Khatarnak touch!) */
+        #genreFilters::-webkit-scrollbar,
+        #yearFilters::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #genreFilters::-webkit-scrollbar-track,
+        #yearFilters::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        #genreFilters::-webkit-scrollbar-thumb,
+        #yearFilters::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--electric-blue), var(--cyber-pink));
+            border-radius: 10px;
+        }
+
+        #genreFilters::-webkit-scrollbar-thumb:hover,
+        #yearFilters::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--cyber-pink), var(--cosmic-purple));
+        }
+
+        /* Chote filter groups ko ek line mein laane ke liye */
+        .dropdown-content .filter-group:nth-child(3),
+        .dropdown-content .filter-group:nth-child(4) {
+            margin-top: -1.5rem; /* Quality aur Content ko upar laane ke liye */
+        }
+
+        .dropdown-content.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--cyber-pink);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            background: rgba(0, 191, 255, 0.1);
+            color: var(--starlight-white);
+            border: 1px solid var(--electric-blue);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: none;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-option:hover, .filter-option.active {
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+            box-shadow: 0 0 10px var(--electric-blue);
+        }
+
+        .filter-option.warning {
+            background: rgba(255, 45, 45, 0.1);
+            border-color: var(--warning-red);
+        }
+
+        .filter-option.warning:hover, .filter-option.warning.active {
+            background: var(--warning-red);
+            box-shadow: 0 0 10px var(--warning-red);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 3rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--starlight-white);
+            margin-bottom: 2rem;
+            position: relative;
+            padding-left: 1rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--cyber-pink), var(--cosmic-purple));
+            border-radius: 2px;
+        }
+
+        .section-title.warning::before {
+            background: linear-gradient(to bottom, var(--warning-red), #ff6b6b);
+        }
+
+        /* Trending Carousel */
+        .trending-carousel {
+            margin-bottom: 5rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .swiper {
+            width: 100%;
+            /* Desktop ke liye default height */
+            height: 520px; 
+            padding: 1rem 0 3rem;
+            transition: height var(--transition-medium); /* Height change smooth lagega */
+        }
+
+        /* Tablet ke liye height */
+        @media (max-width: 992px) {
+            .swiper {
+                height: 440px; /* Slide 375px + neeche padding */
+            }
+        }
+
+        /* Mobile ke liye height */
+        @media (max-width: 576px) {
+            .swiper {
+                height: 360px; /* Slide 300px + neeche padding */
+            }
+        }
+
+        .trending-carousel .swiper-slide {
+            width: 300px;
+            height: 450px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all var(--transition-medium);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: none;
+        }
+
+        .trending-carousel .swiper-slide:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--cosmic-purple);
+            z-index: 10;
+        }
+
+        .trending-carousel .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all var(--transition-medium);
+        }
+
+        .trending-carousel .swiper-slide:hover img {
+            transform: scale(1.1);
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.9), transparent);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all var(--transition-medium);
+        }
+
+        .trending-carousel .swiper-slide:hover .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slide-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--starlight-white);
+            margin-bottom: 0.5rem;
+        }
+
+        .slide-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide-rating, .slide-year, .slide-genre {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .slide-rating {
+            color: var(--electric-blue);
+        }
+
+        .slide-year {
+            color: var(--starlight-white);
+        }
+
+        .slide-genre {
+            color: var(--cyber-pink);
+        }
+
+        .slide-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .slide-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all var(--transition-fast);
+            border: none;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .slide-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--electric-blue);
+            transition: width var(--transition-fast);
+            z-index: -1;
+        }
+
+        .slide-btn:hover::before {
+            width: 100%;
+        }
+
+        .slide-btn.play {
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+        }
+
+        .slide-btn.play:hover {
+            color: var(--starlight-white);
+        }
+
+        .slide-btn.download {
+            background: transparent;
+            color: var(--starlight-white);
+            border: 1px solid var(--starlight-white);
+        }
+
+        .slide-btn.download:hover {
+            background: transparent;
+            border-color: var(--cyber-pink);
+            color: var(--cyber-pink);
+        }
+
+        .swiper-button-next, .swiper-button-prev {
+            color: var(--electric-blue) !important;
+            background: rgba(16, 20, 31, 0.7);
+            width: 50px !important;
+            height: 50px !important;
+            border-radius: 50%;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            transition: all var(--transition-fast);
+            cursor: none;
+        }
+
+        .swiper-button-next::after, .swiper-button-prev::after {
+            font-size: 1.5rem !important;
+            font-weight: bold;
+        }
+
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            color: var(--cosmic-purple) !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--cosmic-purple);
+        }
+
+        .swiper-pagination-bullet {
+            background: var(--starlight-white) !important;
+            opacity: 0.5 !important;
+            width: 12px !important;
+            height: 12px !important;
+            transition: all var(--transition-fast) !important;
+            cursor: none;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: var(--electric-blue) !important;
+            opacity: 1 !important;
+            box-shadow: 0 0 10px var(--electric-blue);
+            transform: scale(1.2);
+        }
+
+        /* Movie Grid */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .movie-card {
+            background: var(--primary-surface);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all var(--transition-medium);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            cursor: none;
+            opacity: 0;
+            transform: translateY(50px) rotateX(15deg);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .movie-card.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--cosmic-purple);
+            z-index: 5;
+        }
+
+        .movie-card.warning {
+            border: 1px solid rgba(255, 45, 45, 0.3);
+        }
+
+        .movie-card.warning:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--warning-red);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: all var(--transition-medium);
+        }
+
+        .movie-card:hover .movie-poster {
+            transform: scale(1.05);
+        }
+
+        .movie-info {
+            padding: 1.2rem;
+            position: relative;
+            z-index: 2;
+            background: var(--primary-surface);
+        }
+
+        .movie-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--starlight-white);
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .movie-year {
+            font-size: 0.9rem;
+            color: var(--electric-blue);
+        }
+
+        .movie-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            color: var(--starlight-white);
+        }
+
+        .movie-rating i {
+            color: var(--cyber-pink);
+        }
+
+        .movie-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .genre-tag {
+            background: rgba(0, 191, 255, 0.1);
+            color: var(--electric-blue);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all var(--transition-fast);
+            border: none;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--electric-blue);
+            transition: width var(--transition-fast);
+            z-index: -1;
+        }
+
+        .action-btn:hover::before {
+            width: 100%;
+        }
+
+        .action-btn.play {
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+        }
+
+        .action-btn.play:hover {
+            color: var(--starlight-white);
+        }
+
+        .action-btn.details {
+            background: transparent;
+            color: var(--starlight-white);
+            border: 1px solid var(--starlight-white);
+        }
+
+        .action-btn.details:hover {
+            background: transparent;
+            border-color: var(--cyber-pink);
+            color: var(--cyber-pink);
+        }
+
+        .movie-card .movie-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.95), transparent);
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all var(--transition-medium);
+        }
+
+        .movie-card:hover .movie-details {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .movie-description {
+            font-size: 0.8rem;
+            color: var(--starlight-white);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Skeleton Loaders */
+        .skeleton-loader {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            height: 400px;
+        }
+
+        .skeleton-loader::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Movie Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-medium);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--primary-surface);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            transform: translateY(50px);
+            transition: transform var(--transition-medium);
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.2);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--starlight-white);
+            font-size: 1.5rem;
+            cursor: none;
+            transition: all var(--transition-fast);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 0, 127, 0.1);
+        }
+
+        .modal-close:hover {
+            color: var(--cyber-pink);
+            transform: rotate(90deg);
+            background: rgba(255, 0, 127, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-poster {
+            width: 300px;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .modal-info {
+            flex: 1;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--starlight-white);
+            margin-bottom: 1rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-rating, .modal-year, .modal-quality {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .modal-rating {
+            color: var(--electric-blue);
+        }
+
+        .modal-year {
+            color: var(--starlight-white);
+        }
+
+        .modal-quality {
+            color: var(--cyber-pink);
+        }
+
+        .modal-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-genre {
+            background: rgba(0, 191, 255, 0.1);
+            color: var(--electric-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .modal-description {
+            color: var(--starlight-white);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .modal-trailer {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all var(--transition-fast);
+            border: none;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--electric-blue);
+            transition: width var(--transition-fast);
+            z-index: -1;
+        }
+
+        .modal-btn:hover::before {
+            width: 100%;
+        }
+
+        .modal-btn.play {
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+        }
+
+        .modal-btn.play:hover {
+            color: var(--starlight-white);
+        }
+
+        .modal-btn.download {
+            background: transparent;
+            color: var(--starlight-white);
+            border: 1px solid var(--starlight-white);
+        }
+
+        .modal-btn.download:hover {
+            background: transparent;
+            border-color: var(--cyber-pink);
+            color: var(--cyber-pink);
+        }
+
+        .modal-download-options {
+            margin-top: 2rem;
+        }
+
+        .download-options-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--electric-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .download-option {
+            background: rgba(0, 191, 255, 0.05);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            border-radius: 5px;
+            padding: 1rem;
+            transition: all var(--transition-fast);
+            cursor: none;
+        }
+
+        .download-option:hover {
+            background: rgba(0, 191, 255, 0.1);
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+
+        .download-quality {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--electric-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .download-size {
+            font-size: 0.8rem;
+            color: var(--starlight-white);
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            cursor: none;
+            transition: all var(--transition-fast);
+        }
+
+        .download-btn:hover {
+            background: var(--cosmic-purple);
+            color: var(--starlight-white);
+        }
+
+        /* No Results */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 5rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: var(--cyber-pink);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .no-results h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--starlight-white);
+            margin-bottom: 1rem;
+        }
+
+        .no-results p {
+            color: var(--starlight-white);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-surface);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-column h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--electric-blue);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-pink), var(--cosmic-purple));
+        }
+
+        .footer-about .logo {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .footer-about p {
+            color: var(--starlight-white);
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 191, 255, 0.1);
+            color: var(--electric-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all var(--transition-fast);
+            cursor: none;
+        }
+
+        .social-link:hover {
+            background: var(--electric-blue);
+            color: var(--galactic-black);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--electric-blue);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--starlight-white);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--electric-blue);
+            padding-left: 0.5rem;
+        }
+
+        .footer-links a i {
+            font-size: 0.8rem;
+            color: var(--cyber-pink);
+        }
+
+        .creator-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--starlight-white);
+        }
+
+        .info-item i {
+            color: var(--cyber-pink);
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 2rem 0 0;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(0, 191, 255, 0.1);
+            color: var(--starlight-white);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+/* --- NAYA FEATURED HERO SECTION CSS START --- */
+.hero-slider-section {
+    height: 95vh;
+    width: 100%;
+    margin-top: 70px; /* Header ke liye jagah */
+    position: relative;
+}
+
+.hero-swiper {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hero-swiper .swiper-slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Content ko left align karne ke liye */
+    padding: 0 8%; /* Side se thoda padding */
+    overflow: hidden;
+}
+
+.hero-swiper .featured-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: -2;
+    transform: scale(1.1); /* Start zoomed in */
+    transition: transform 8s ease-out;
+}
+
+.hero-swiper .swiper-slide-active .featured-bg-image {
+    transform: scale(1); /* Zoom out to normal scale on active slide */
+}
+
+.hero-swiper .featured-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(90deg, 
+        rgba(10, 10, 10, 0.9) 25%, 
+        rgba(10, 10, 10, 0.7) 40%, 
+        rgba(10, 10, 10, 0) 70%
+    );
+}
+
+/* Yahan se naya CSS add kiya hai */
+.hero-slide-content {
+    position: relative;
+    z-index: 2;
+    max-width: 550px;
+    color: var(--starlight-white);
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    transition-delay: 0.5s;
+}
+
+.hero-swiper .swiper-slide-active .hero-slide-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.hero-subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--electric-blue);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.hero-main-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+}
+
+.hero-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.hero-meta .quality-tag {
+    background-color: var(--cyber-pink);
+    color: var(--starlight-white);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.hero-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 90%; /* Description ko thoda chota rakha */
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-hero {
+    padding: 0.8rem 1.8rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 50px;
+    border: 2px solid transparent;
+    cursor: none;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-hero-primary {
+    background-color: var(--electric-blue);
+    color: var(--galactic-black);
+}
+
+.btn-hero-primary:hover {
+    background-color: transparent;
+    border-color: var(--electric-blue);
+    color: var(--electric-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px var(--electric-blue);
+}
+
+.btn-hero-secondary {
+    background-color: transparent;
+    color: var(--starlight-white);
+    border-color: var(--starlight-white);
+}
+
+.btn-hero-secondary:hover {
+    background-color: var(--starlight-white);
+    color: var(--galactic-black);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px var(--starlight-white);
+}
+
+
+/* Pagination (dots) ki styling */
+.hero-pagination {
+    position: absolute;
+    bottom: 30px !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: auto !important;
+}
+
+.hero-pagination .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1 !important;
+    margin: 0 6px !important;
+    transition: all var(--transition-fast);
+}
+
+.hero-pagination .swiper-pagination-bullet-active {
+    background: var(--electric-blue) !important;
+    box-shadow: 0 0 10px var(--electric-blue);
+    width: 25px !important;
+    border-radius: 5px;
+}
+/* --- NAYA FEATURED HERO SECTION CSS END --- */
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .modal-header {
+                flex-direction: column;
+            }
+            .modal-poster {
+                width: 100%;
+                height: auto;
+                max-height: 400px;
+            }
+            .hero-main-title {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .trending-carousel .swiper-slide {
+                width: 250px;
+                height: 375px;
+            }
+            .hero-main-title {
+                font-size: 3rem;
+            }
+            .hero-slide-content {
+                max-width: 70%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-slider-section {
+                height: 85vh;
+            }
+            .hero-main-title {
+                font-size: 2.5rem;
+            }
+            .hero-description {
+                font-size: 0.9rem;
+                max-width: 100%;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .search-box, .filter-dropdown {
+                width: 100%;
+            }
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .dropdown-content {
+                width: 100%;
+                right: auto;
+                left: 0;
+                grid-template-columns: 1fr; /* 1 column on mobile */
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+            .modal-trailer {
+                height: 250px;
+            }
+            .modal-actions {
+                flex-direction: column;
+            }
+            .modal-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                padding: 1rem;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .trending-carousel .swiper-slide {
+                width: 200px;
+                height: 300px;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            .hero-slider-section {
+                height: 80vh;
+            }
+            .hero-main-title {
+                font-size: 2rem;
+            }
+            .hero-subtitle {
+                font-size: 0.8rem;
+            }
+            .hero-slide-content {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo">
+            <i class="fas fa-globe"></i> CineWorld
+        </div>
+        <div class="preloader-bar">
+            <div class="preloader-progress"></div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- Starfield Background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">
+            <i class="fas fa-globe"></i> CineWorld
+        </a>
+
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#trending">Movies</a></li>
+                <li><a href="#tv-shows">TV Shows</a></li>
+                <li><a href="#genres">Genres</a></li>
+                <li><a href="#restricted">18+</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="#trending"><i class="fas fa-fire"></i> Trending</a></li>
+            <li><a href="#movies"><i class="fas fa-film"></i> Movies</a></li>
+            <li><a href="#tv-shows"><i class="fas fa-tv"></i> TV Shows</a></li>
+            <li><a href="#genres"><i class="fas fa-tags"></i> Genres</a></li>
+            <li><a href="#restricted"><i class="fas fa-exclamation-triangle"></i> 18+</a></li>
+            <li><a href="#footer"><i class="fas fa-info-circle"></i> About</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-slider-section">
+        <div class="hero-swiper swiper">
+            <div class="swiper-wrapper" id="heroSwiperWrapper">
+                <!-- Movie slides yahan JavaScript se aayenge -->
+            </div>
+            <!-- Ismein pagination (dots) bhi add karenge -->
+            <div class="swiper-pagination hero-pagination"></div>
+        </div>
+    </section>
+    
+    <!-- Search & Filter Bar -->
+    <div class="search-filter">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search across the cinematic universe...">
+            </div>
+            <div class="filter-dropdown">
+                <button class="filter-btn" id="filterBtn">
+                    <i class="fas fa-filter"></i> FILTER
+                </button>
+                <div class="dropdown-content" id="dropdownContent">
+<div class="filter-group">
+    <h4>GENRE</h4>
+    <div class="filter-options" id="genreFilters">
+        <div class="filter-option" data-filter="genre" data-value="action">Action</div>
+        <div class="filter-option" data-filter="genre" data-value="adventure">Adventure</div>
+        <div class="filter-option" data-filter="genre" data-value="animation">Animation</div>
+        <div class="filter-option" data-filter="genre" data-value="comedy">Comedy</div>
+        <div class="filter-option" data-filter="genre" data-value="crime">Crime</div>
+        <div class="filter-option" data-filter="genre" data-value="documentary">Documentary</div>
+        <div class="filter-option" data-filter="genre" data-value="drama">Drama</div>
+        <div class="filter-option" data-filter="genre" data-value="family">Family</div>
+        <div class="filter-option" data-filter="genre" data-value="fantasy">Fantasy</div>
+        <div class="filter-option" data-filter="genre" data-value="history">History</div>
+        <div class="filter-option" data-filter="genre" data-value="horror">Horror</div>
+        <div class="filter-option" data-filter="genre" data-value="mystery">Mystery</div>
+        <div class="filter-option" data-filter="genre" data-value="romance">Romance</div>
+        <div class="filter-option" data-filter="genre" data-value="sci-fi">Sci-Fi</div>
+        <div class="filter-option" data-filter="genre" data-value="thriller">Thriller</div>
+        <div class="filter-option" data-filter="genre" data-value="war">War</div>
+        <div class="filter-option" data-filter="genre" data-value="western">Western</div>
+        <div class="filter-option" data-filter="genre" data-value="biography">Biography</div>
+        <div class="filter-option" data-filter="genre" data-value="musical">Musical</div>
+        <div class="filter-option" data-filter="genre" data-value="sport">Sport</div>
+        <div class="filter-option" data-filter="genre" data-value="superhero">Superhero</div>
+        <div class="filter-option" data-filter="genre" data-value="noir">Noir</div>
+        <div class="filter-option" data-filter="genre" data-value="psychological">Psychological</div>
+        <div class="filter-option" data-filter="genre" data-value="satire">Satire</div>
+        <div class="filter-option" data-filter="genre" data-value="slasher">Slasher</div>
+        <div class="filter-option" data-filter="genre" data-value="steampunk">Steampunk</div>
+        <div class="filter-option" data-filter="genre" data-value="surreal">Surreal</div>
+        <div class="filter-option" data-filter="genre" data-value="teen">Teen</div>
+        <div class="filter-option" data-filter="genre" data-value="vampire">Vampire</div>
+        <div class="filter-option" data-filter="genre" data-value="zombie">Zombie</div>
+    </div>
+</div>
+<div class="filter-group">
+    <h4>YEAR</h4>
+    <div class="filter-options" id="yearFilters">
+        <div class="filter-option" data-filter="year" data-value="2025">2025</div>
+        <div class="filter-option" data-filter="year" data-value="2024">2024</div>
+        <div class="filter-option" data-filter="year" data-value="2023">2023</div>
+        <div class="filter-option" data-filter="year" data-value="2022">2022</div>
+        <div class="filter-option" data-filter="year" data-value="2021">2021</div>
+        <div class="filter-option" data-filter="year" data-value="2020">2020</div>
+        <div class="filter-option" data-filter="year" data-value="2019">2019</div>
+        <div class="filter-option" data-filter="year" data-value="2018">2018</div>
+        <div class="filter-option" data-filter="year" data-value="2017">2017</div>
+        <div class="filter-option" data-filter="year" data-value="2016">2016</div>
+        <div class="filter-option" data-filter="year" data-value="2015">2015</div>
+        <div class="filter-option" data-filter="year" data-value="2014">2014</div>
+        <div class="filter-option" data-filter="year" data-value="2013">2013</div>
+        <div class="filter-option" data-filter="year" data-value="2012">2012</div>
+        <div class="filter-option" data-filter="year" data-value="2011">2011</div>
+        <div class="filter-option" data-filter="year" data-value="2010">2010</div>
+        <div class="filter-option" data-filter="year" data-value="2009">2009</div>
+        <div class="filter-option" data-filter="year" data-value="2008">2008</div>
+        <div class="filter-option" data-filter="year" data-value="2007">2007</div>
+        <div class="filter-option" data-filter="year" data-value="2006">2006</div>
+        <div class="filter-option" data-filter="year" data-value="2005">2005</div>
+        <div class="filter-option" data-filter="year" data-value="2004">2004</div>
+        <div class="filter-option" data-filter="year" data-value="2003">2003</div>
+        <div class="filter-option" data-filter="year" data-value="2002">2002</div>
+        <div class="filter-option" data-filter="year" data-value="2001">2001</div>
+        <div class="filter-option" data-filter="year" data-value="2000">2000</div>
+        <div class="filter-option" data-filter="year" data-value="1999">1999</div>
+        <div class="filter-option" data-filter="year" data-value="1998">1998</div>
+        <div class="filter-option" data-filter="year" data-value="1997">1997</div>
+        <div class="filter-option" data-filter="year" data-value="1996">1996</div>
+        <div class="filter-option" data-filter="year" data-value="1995">1995</div>
+        <div class="filter-option" data-filter="year" data-value="1994">1994</div>
+        <div class="filter-option" data-filter="year" data-value="1993">1993</div>
+        <div class="filter-option" data-filter="year" data-value="1992">1992</div>
+        <div class="filter-option" data-filter="year" data-value="1991">1991</div>
+        <div class="filter-option" data-filter="year" data-value="1990">1990</div>
+        <div class="filter-option" data-filter="year" data-value="1989">1989</div>
+        <div class="filter-option" data-filter="year" data-value="1988">1988</div>
+        <div class="filter-option" data-filter="year" data-value="1987">1987</div>
+        <div class="filter-option" data-filter="year" data-value="1986">1986</div>
+        <div class="filter-option" data-filter="year" data-value="1985">1985</div>
+        <div class="filter-option" data-filter="year" data-value="1984">1984</div>
+        <div class="filter-option" data-filter="year" data-value="1983">1983</div>
+        <div class="filter-option" data-filter="year" data-value="1982">1982</div>
+        <div class="filter-option" data-filter="year" data-value="1981">1981</div>
+        <div class="filter-option" data-filter="year" data-value="1980">1980</div>
+        <div class="filter-option" data-filter="year" data-value="1979">1979</div>
+        <div class="filter-option" data-filter="year" data-value="1978">1978</div>
+        <div class="filter-option" data-filter="year" data-value="1977">1977</div>
+        <div class="filter-option" data-filter="year" data-value="1976">1976</div>
+        <div class="filter-option" data-filter="year" data-value="1975">1975</div>
+        <div class="filter-option" data-filter="year" data-value="1974">1974</div>
+        <div class="filter-option" data-filter="year" data-value="1973">1973</div>
+        <div class="filter-option" data-filter="year" data-value="1972">1972</div>
+        <div class="filter-option" data-filter="year" data-value="1971">1971</div>
+        <div class="filter-option" data-filter="year" data-value="1970">1970</div>
+        <div class="filter-option" data-filter="year" data-value="1969">1969</div>
+        <div class="filter-option" data-filter="year" data-value="1968">1968</div>
+        <div class="filter-option" data-filter="year" data-value="1967">1967</div>
+        <div class="filter-option" data-filter="year" data-value="1966">1966</div>
+        <div class="filter-option" data-filter="year" data-value="1965">1965</div>
+        <div class="filter-option" data-filter="year" data-value="1964">1964</div>
+        <div class="filter-option" data-filter="year" data-value="1963">1963</div>
+        <div class="filter-option" data-filter="year" data-value="1962">1962</div>
+        <div class="filter-option" data-filter="year" data-value="1961">1961</div>
+        <div class="filter-option" data-filter="year" data-value="1960">1960</div>
+        <div class="filter-option" data-filter="year" data-value="1959">1959</div>
+        <div class="filter-option" data-filter="year" data-value="1958">1958</div>
+        <div class="filter-option" data-filter="year" data-value="1957">1957</div>
+        <div class="filter-option" data-filter="year" data-value="1956">1956</div>
+        <div class="filter-option" data-filter="year" data-value="1955">1955</div>
+        <div class="filter-option" data-filter="year" data-value="1954">1954</div>
+        <div class="filter-option" data-filter="year" data-value="1953">1953</div>
+        <div class="filter-option" data-filter="year" data-value="1952">1952</div>
+        <div class="filter-option" data-filter="year" data-value="1951">1951</div>
+        <div class="filter-option" data-filter="year" data-value="1950">1950</div>
+    </div>
+</div>
+                    <div class="filter-group">
+                        <h4>QUALITY</h4>
+                        <div class="filter-options" id="qualityFilters">
+                            <div class="filter-option" data-filter="quality" data-value="4k">4K</div>
+                            <div class="filter-option" data-filter="quality" data-value="hd">HD</div>
+                            <div class="filter-option" data-filter="quality" data-value="sd">SD</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h4>CONTENT</h4>
+                        <div class="filter-options">
+                            <div class="filter-option warning" data-filter="restricted" data-value="18+">18+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Trending Section -->
+        <section id="trending">
+            <h2 class="section-title">TRENDING IN THE UNIVERSE</h2>
+            <div class="trending-carousel swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slides will be generated by JavaScript -->
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+
+        <!-- Hollywood Section -->
+        <section id="movies">
+            <h2 class="section-title">HOLLYWOOD TITANS</h2>
+            <div class="movie-grid" id="hollywoodGrid">
+                <!-- Movie cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Bollywood Section -->
+        <section id="bollywood">
+            <h2 class="section-title">BOLLYWOOD BLOCKBUSTERS</h2>
+            <div class="movie-grid" id="bollywoodGrid">
+                <!-- Movie cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- South Indian Section -->
+        <section id="south-indian">
+            <h2 class="section-title">SOUTH INDIAN POWERHOUSES</h2>
+            <div class="movie-grid" id="southIndianGrid">
+                <!-- Movie cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- TV Shows Section -->
+        <section id="tv-shows">
+            <h2 class="section-title">BINGE-WORTHY TV SHOWS</h2>
+            <div class="movie-grid" id="tvShowsGrid">
+                <!-- TV Show cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Hindi Dubbed Section -->
+        <section id="hindi-dubbed">
+            <h2 class="section-title">PREMIUM HINDI DUBBED</h2>
+            <div class="movie-grid" id="hindiDubbedGrid">
+                <!-- Movie cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Restricted Section -->
+        <section id="restricted">
+            <h2 class="section-title warning">RESTRICTED ZONE (18+)</h2>
+            <div class="movie-grid" id="restrictedGrid">
+                <!-- Movie cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- No Results -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>NO RESULTS FOUND IN THIS GALAXY...</h3>
+            <p>Your search query didn't match any of our cosmic collection. Try adjusting your filters or searching for something else.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <div class="footer-column footer-about">
+                <a href="#" class="logo">
+                    <i class="fas fa-globe"></i> CineWorld
+                </a>
+                <p>Exploring the cinematic universe, one frame at a time. CineWorld brings you the best movies and TV shows from across galaxies, all in one place.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>EXPLORE</h3>
+                <ul class="footer-links">
+                    <li><a href="#trending"><i class="fas fa-chevron-right"></i> Trending Now</a></li>
+                    <li><a href="#movies"><i class="fas fa-chevron-right"></i> Hollywood Movies</a></li>
+                    <li><a href="#bollywood"><i class="fas fa-chevron-right"></i> Bollywood Movies</a></li>
+                    <li><a href="#tv-shows"><i class="fas fa-chevron-right"></i> TV Shows</a></li>
+                    <li><a href="#restricted"><i class="fas fa-chevron-right"></i> 18+ Content</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>CREATOR'S CONSOLE</h3>
+                <div class="creator-info">
+                    <div class="info-item">
+                        <i class="fas fa-user"></i>
+                        <span>Ritik Rai</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+91 7898462351</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>rair55838@gmail.com</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-globe"></i>
+                        <span>India</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fab fa-instagram"></i>
+                        <a href="https://www.instagram.com/rithsigmax90__?igsh=cnRqcXcyem9vaDg3" target="_blank">@rithsigmax90__</a>
+                    </div>
+                    <div class="info-item">
+                        <i class="fab fa-telegram"></i>
+                        <a href="https://t.me/PREMIUMFANTASYHUB" target="_blank">Premium Fantasy Hub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 CineWorld. All rights reserved. Forged in the digital realm by Ritik Rai.
+        </div>
+    </footer>
+
+    <!-- Movie Modal -->
+    <div class="modal-overlay" id="movieModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <img src="" alt="Movie Poster" class="modal-poster" id="modalPoster">
+                <div class="modal-info">
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                    <div class="modal-meta">
+                        <span class="modal-rating" id="modalRating"><i class="fas fa-star"></i> 8.6</span>
+                        <span class="modal-year" id="modalYear"><i class="fas fa-calendar"></i> 2023</span>
+                        <span class="modal-quality" id="modalQuality"><i class="fas fa-film"></i> 4K</span>
+                    </div>
+                    <div class="modal-genres" id="modalGenres"></div>
+                    <p class="modal-description" id="modalDescription">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                    <div class="modal-actions">
+                        <button class="modal-btn play"><i class="fas fa-play"></i> Play Now</button>
+                        <button class="modal-btn download"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                </div>
+            </div>
+            <iframe class="modal-trailer" id="modalTrailer" src="" frameborder="0" allowfullscreen></iframe>
+<div class="modal-download-options">
+    <h3 class="download-options-title"><i class="fas fa-download"></i> Download Options</h3>
+    <div class="download-options-grid" id="downloadOptionsGrid">
+        <!-- 4K Option -->
+        <div class="download-option q4k" style="display: none;">
+            <h4 class="download-quality">4K Ultra HD</h4>
+            <p class="download-size">Size: N/A</p>
+            <a href="#" target="_blank" class="download-btn">Download</a>
+        </div>
+        <!-- 1080p Option -->
+        <div class="download-option q1080p" style="display: none;">
+            <h4 class="download-quality">1080p Full HD</h4>
+            <p class="download-size">Size: N/A</p>
+            <a href="#" target="_blank" class="download-btn">Download</a>
+        </div>
+        <!-- 720p Option -->
+        <div class="download-option q720p" style="display: none;">
+            <h4 class="download-quality">720p HD</h4>
+            <p class="download-size">Size: N/A</p>
+            <a href="#" target="_blank" class="download-btn">Download</a>
+        </div>
+        <!-- 480p Option -->
+        <div class="download-option q480p" style="display: none;">
+            <h4 class="download-quality">480p SD</h4>
+            <p class="download-size">Size: N/A</p>
+            <a href="#" target="_blank" class="download-btn">Download</a>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // State management object
+        const appState = {
+            filters: {
+                searchTerm: '',
+                genres: [],
+                years: [],
+                qualities: [],
+                showRestricted: false
+            },
+            featuredMovies: [
+              { 
+        title: "DUNE", 
+        subtitle: "NOW STREAMING",
+        year: "2021", 
+        genres: "Sci-Fi, Adventure", 
+        quality: "4K",
+        description: "Paul Atreides, a brilliant young man, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.",
+        image: "https://i.postimg.cc/SNqQyWkD/MV5-BNWIy-Nm-U5-MGYt-ZDZm-Ni00-Zj-Aw-LWJl-Yjgt-ZTc0-ZGIx-MDE4-ZGYw-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
+        links: {
+            trailer: "https://www.youtube.com/watch?v=n9xhJrPXop4",
+            download: {
+                "4K": "https://example.com/dune/4k/download",
+                "1080p": "https://example.com/dune/1080p/download",
+                "720p": "https://example.com/dune/720p/download"
+            }
+        },
+        badge: "NEW RELEASE"
+    },
+    { 
+        title: "JOKER", 
+        subtitle: "CRITICALLY ACCLAIMED",
+        year: "2019", 
+        genres: "Drama, Thriller", 
+        quality: "4K",
+        description: "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society, leading him on a downward spiral of revolution and bloody crime.",
+        image: "https://i.postimg.cc/3Jt7vXw9/images-1.jpg",
+        links: {
+            trailer: "https://www.youtube.com/watch?v=t433PEQGErc",
+            download: {
+                "4K": "https://example.com/joker/4k/download",
+                "1080p": "https://example.com/joker/1080p/download",
+                "Subtitles": "https://example.com/joker/subtitles"
+            }
+        },
+        badge: "OSCAR WINNER"
+    },
+    { 
+        title: "INTERSTELLAR", 
+        subtitle: "A CINEMATIC JOURNEY",
+        year: "2014", 
+        genres: "Sci-Fi, Drama", 
+        quality: "4K",
+        description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival, leaving their families behind on a dying Earth.",
+        image: "https://i.postimg.cc/W4C0bqr1/images-2.jpg",
+        links: {
+            trailer: "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+            download: {
+                "4K HDR": "https://example.com/interstellar/4khdr/download",
+                "IMAX Version": "https://example.com/interstellar/imax/download",
+                "Soundtrack": "https://example.com/interstellar/soundtrack"
+            }
+        },
+        badge: "FAN FAVORITE"
+    },
+                { 
+                    title: "DUNE", 
+                    subtitle: "NOW STREAMING",
+                    year: "2021", 
+                    genres: "Sci-Fi, Adventure", 
+                    quality: "4K",
+                    description: "Paul Atreides, a brilliant young man, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.",
+                    image: "https://i.postimg.cc/SNqQyWkD/MV5-BNWIy-Nm-U5-MGYt-ZDZm-Ni00-Zj-Aw-LWJl-Yjgt-ZTc0-ZGIx-MDE4-ZGYw-Xk-Ey-Xk-Fqc-Gc-V1.jpg" // Working Link
+                },
+                { 
+                    title: "JOKER", 
+                    subtitle: "CRITICALLY ACCLAIMED",
+                    year: "2019", 
+                    genres: "Drama, Thriller", 
+                    quality: "4K",
+                    description: "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society, leading him on a downward spiral of revolution and bloody crime.",
+                    image: "https://i.postimg.cc/3Jt7vXw9/images-1.jpg" // Working Link
+                },
+                { 
+                    title: "INTERSTELLAR", 
+                    subtitle: "A CINEMATIC JOURNEY",
+                    year: "2014", 
+                    genres: "Sci-Fi, Drama", 
+                    quality: "4K",
+                    description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival, leaving their families behind on a dying Earth.",
+                    image: "https://i.postimg.cc/W4C0bqr1/images-2.jpg" // Working Link
+                }
+            ],
+            moviesData: null,
+            isLoading: true
+        };
+
+        // DOM Elements
+        const DOM = {
+            preloader: document.getElementById('preloader'),
+            cursor: document.getElementById('cursor'),
+            cursorFollower: document.getElementById('cursorFollower'),
+            starfield: document.getElementById('starfield'),
+            menuToggle: document.getElementById('menuToggle'),
+            mobileMenu: document.getElementById('mobileMenu'),
+            themeToggle: document.getElementById('themeToggle'),
+            filterBtn: document.getElementById('filterBtn'),
+            dropdownContent: document.getElementById('dropdownContent'),
+            searchInput: document.getElementById('searchInput'),
+            noResults: document.getElementById('noResults'),
+            movieModal: document.getElementById('movieModal'),
+            modalClose: document.getElementById('modalClose'),
+            modalPoster: document.getElementById('modalPoster'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalRating: document.getElementById('modalRating'),
+            modalYear: document.getElementById('modalYear'),
+            modalQuality: document.getElementById('modalQuality'),
+            modalGenres: document.getElementById('modalGenres'),
+            modalDescription: document.getElementById('modalDescription'),
+            modalTrailer: document.getElementById('modalTrailer'),
+            heroSwiperWrapper: document.getElementById('heroSwiperWrapper'), // Naya DOM element
+            trendingSwiperWrapper: document.querySelector('.trending-carousel .swiper-wrapper'),
+            hollywoodGrid: document.getElementById('hollywoodGrid'),
+            bollywoodGrid: document.getElementById('bollywoodGrid'),
+            southIndianGrid: document.getElementById('southIndianGrid'),
+            tvShowsGrid: document.getElementById('tvShowsGrid'),
+            hindiDubbedGrid: document.getElementById('hindiDubbedGrid'),
+            restrictedGrid: document.getElementById('restrictedGrid')
+        };
+
+        // Initialize the application
+        function init() {
+            createStarfield();
+            setupCustomCursor();
+            setupEventListeners();
+            showSkeletonLoaders();
+            fetchMovieData();
+            renderHeroSlider(); // Nayi function call
+            initHeroSwiper(); // Nayi function call
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            DOM.menuToggle.addEventListener('click', toggleMobileMenu);
+            DOM.themeToggle.addEventListener('click', toggleTheme);
+            DOM.filterBtn.addEventListener('click', toggleFilterDropdown);
+            document.addEventListener('click', closeFilterDropdownOnOutsideClick);
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.addEventListener('click', toggleFilterOption);
+            });
+            DOM.searchInput.addEventListener('input', debounce(handleSearchInput, 300));
+            DOM.modalClose.addEventListener('click', closeMovieModal);
+            DOM.movieModal.addEventListener('click', closeMovieModalOnOutsideClick);
+        }
+
+        // Create starfield background with parallax effect
+        function createStarfield() {
+            const starsCount = 200;
+            const depthMultiplier = 5;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 3;
+                const depth = Math.random() * depthMultiplier;
+                const opacity = Math.random() * 0.8 + 0.2;
+                const duration = Math.random() * 10 + 5;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--opacity', opacity);
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--depth', depth);
+                
+                DOM.starfield.appendChild(star);
+            }
+            
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                DOM.starfield.querySelectorAll('.star').forEach(star => {
+                    const depth = parseFloat(star.style.getPropertyValue('--depth'));
+                    const moveX = (x - 0.5) * depth * 20;
+                    const moveY = (y - 0.5) * depth * 20;
+                    star.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
+            });
+        }
+
+        // Setup custom cursor
+        function setupCustomCursor() {
+            document.addEventListener('mousemove', (e) => {
+                DOM.cursor.style.left = e.clientX + 'px';
+                DOM.cursor.style.top = e.clientY + 'px';
+                setTimeout(() => {
+                    DOM.cursorFollower.style.left = e.clientX + 'px';
+                    DOM.cursorFollower.style.top = e.clientY + 'px';
+                }, 100);
+            });
+            
+            const hoverElements = document.querySelectorAll('a, button, .movie-card, .swiper-slide, .filter-option');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    DOM.cursor.classList.add('cursor-active');
+                    DOM.cursorFollower.classList.add('cursor-follower-active');
+                });
+                el.addEventListener('mouseleave', () => {
+                    DOM.cursor.classList.remove('cursor-active');
+                    DOM.cursorFollower.classList.remove('cursor-follower-active');
+                });
+            });
+            
+            document.addEventListener('click', () => {
+                DOM.cursor.classList.add('cursor-click');
+                setTimeout(() => DOM.cursor.classList.remove('cursor-click'), 300);
+            });
+        }
+        
+        function toggleMobileMenu() {
+            DOM.mobileMenu.classList.toggle('active');
+            DOM.menuToggle.innerHTML = DOM.mobileMenu.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            DOM.themeToggle.innerHTML = document.body.classList.contains('light-theme') 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+        }
+        
+        function toggleFilterDropdown() {
+            DOM.dropdownContent.classList.toggle('active');
+        }
+
+        function closeFilterDropdownOnOutsideClick(event) {
+            if (!DOM.filterBtn.contains(event.target) && !DOM.dropdownContent.contains(event.target)) {
+                DOM.dropdownContent.classList.remove('active');
+            }
+        }
+
+        function toggleFilterOption() {
+            this.classList.toggle('active');
+            updateFilters();
+            filterMovies();
+        }
+
+        function updateFilters() {
+            appState.filters = {
+                searchTerm: DOM.searchInput.value.toLowerCase(),
+                genres: Array.from(document.querySelectorAll('#genreFilters .filter-option.active')).map(el => el.dataset.value),
+                years: Array.from(document.querySelectorAll('#yearFilters .filter-option.active')).map(el => el.dataset.value),
+                qualities: Array.from(document.querySelectorAll('#qualityFilters .filter-option.active')).map(el => el.dataset.value),
+                showRestricted: document.querySelector('[data-value="18+"].active') !== null
+            };
+        }
+
+        function handleSearchInput() {
+            updateFilters();
+            filterMovies();
+        }
+
+        function debounce(func, delay) {
+            let timeoutId;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        function showSkeletonLoaders() {
+            const skeletonCount = 5; // Changed to 5
+            const grids = [DOM.hollywoodGrid, DOM.bollywoodGrid, DOM.southIndianGrid, DOM.tvShowsGrid, DOM.hindiDubbedGrid, DOM.restrictedGrid];
+            
+            grids.forEach(grid => {
+                grid.innerHTML = '';
+                for (let i = 0; i < skeletonCount; i++) {
+                    grid.innerHTML += '<div class="skeleton-loader"></div>';
+                }
+            });
+            
+            DOM.trendingSwiperWrapper.innerHTML = '';
+            for (let i = 0; i < 5; i++) { // Changed to 5
+                DOM.trendingSwiperWrapper.innerHTML += '<div class="swiper-slide skeleton-loader"></div>';
+            }
+        }
+
+        // Fetch movie data (simulating API call)
+        function fetchMovieData() {
+            setTimeout(() => {
+                appState.moviesData = {
+                    trending: [
+                        { title: "Interstellar", year: "2014", rating: "8.6", genre: "sci-fi adventure", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", trailer: "https://www.youtube.com/embed/zSWdZVtXT7E", description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", playLink: "#", downloadLinks: { q4k: { link: "#", size: "8.5GB" }, q1080p: { link: "#", size: "4.2GB" }, q720p: { link: "#", size: "2.1GB" }, q480p: { link: "#", size: "1.2GB" }}},
+                        { title: "Oppenheimer", year: "2023", rating: "8.6", genre: "biography thriller", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg", trailer: "https://www.youtube.com/embed/uYPbbksJxIg", description: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb." },
+                        { title: "Barbie", year: "2023", rating: "7.3", genre: "comedy fantasy", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BNjU3N2QxNzYtMjk1NC00MTc4LTk1NTQtMmUxNTljM2I0NDA5XkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg", trailer: "https://www.youtube.com/embed/pBk4NYhWNMM", description: "Barbie suffers a crisis that leads her to question her world and her existence." },
+                        { title: "The Nun II", year: "2023", rating: "6.0", genre: "horror mystery", quality: "hd", image: "https://m.media-amazon.com/images/M/MV5BMjFkYzUzMmItZGE3Ny00NDM5LTlmMWQtMjI4NWI0ZTZhYjY4XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", trailer: "https://www.youtube.com/embed/QF-oyCwaArU", description: "1956 France, a priest is murdered and evil is spreading. Sister Irene must again face the demonic force Valak." },
+                        { title: "Talk to Me", year: "2023", rating: "7.2", genre: "horror thriller", quality: "hd", image: "https://m.media-amazon.com/images/M/MV5BZWE2N2JkZmItZmUyNC00NTg0LWI1ZDYtZTRiNWIxYmI4M2Q1XkEyXkFqcGdeQXVyMTAxNzQ1NzI@._V1_.jpg", trailer: "https://www.youtube.com/embed/aLAKJu9aJys", description: "A group of friends discover how to conjure spirits using an embalmed hand, but they unleash terrifying supernatural forces." }
+                    ],
+                    hollywood: [
+  // Movie 1
+  {
+    title: "The Dark Knight",
+    year: "2008",
+    rating: "9.0",
+    genre: "action crime drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    trailer: "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+    description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    playLink: "https_//drive.google.com/..../the_dark_knight_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../the_dark_knight_4k_download.mkv", size: "9.2GB" },
+      q1080p: { link: "https_//.../the_dark_knight_1080p_download.mkv", size: "4.5GB" },
+      q720p: { link: "https_//.../the_dark_knight_720p_download.mkv", size: "2.2GB" },
+      q480p: { link: "https_//.../the_dark_knight_480p_download.mkv", size: "1.3GB" }
+    }
+  },
+
+  // Movie 2
+  {
+    title: "The Shawshank Redemption",
+    year: "1994",
+    rating: "9.3",
+    genre: "drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+    trailer: "https://www.youtube.com/watch?v=6hB3S9bIaco",
+    description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+    playLink: "https_//drive.google.com/..../shawshank_redemption_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../shawshank_redemption_4k_download.mkv", size: "8.9GB" },
+      q1080p: { link: "https_//.../shawshank_redemption_1080p_download.mkv", size: "4.4GB" },
+      q720p: { link: "https_//.../shawshank_redemption_720p_download.mkv", size: "2.1GB" },
+      q480p: { link: "https_//.../shawshank_redemption_480p_download.mkv", size: "1.1GB" }
+    }
+  },
+
+  // Movie 3
+  {
+    title: "Pulp Fiction",
+    year: "1994",
+    rating: "8.9",
+    genre: "crime thriller",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+    trailer: "https://www.youtube.com/watch?v=s7EdQ4FqbhY",
+    description: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+    playLink: "https_//drive.google.com/..../pulp_fiction_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../pulp_fiction_4k_download.mkv", size: "8.0GB" },
+      q1080p: { link: "https_//.../pulp_fiction_1080p_download.mkv", size: "4.1GB" },
+      q720p: { link: "https_//.../pulp_fiction_720p_download.mkv", size: "2.0GB" },
+      q480p: { link: "https_//.../pulp_fiction_480p_download.mkv", size: "1.0GB" }
+    }
+  },
+
+  // Movie 4
+  {
+    title: "Forrest Gump",
+    year: "1994",
+    rating: "8.8",
+    genre: "drama romance comedy",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdSm.jpg",
+    trailer: "https://www.youtube.com/watch?v=bLvqoHBptjg",
+    description: "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal and other historical events unfold from the perspective of an Alabama man with an IQ of 75, whose only desire is to be reunited with his childhood sweetheart.",
+    playLink: "https_//drive.google.com/..../forrest_gump_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../forrest_gump_4k_download.mkv", size: "8.7GB" },
+      q1080p: { link: "https_//.../forrest_gump_1080p_download.mkv", size: "4.3GB" },
+      q720p: { link: "https_//.../forrest_gump_720p_download.mkv", size: "2.3GB" },
+      q480p: { link: "https_//.../forrest_gump_480p_download.mkv", size: "1.2GB" }
+    }
+  },
+
+  // Movie 5
+  {
+    title: "The Matrix",
+    year: "1999",
+    rating: "8.7",
+    genre: "sci-fi action",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+    trailer: "https://www.youtube.com/watch?v=vKQi3bBA1y8",
+    description: "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
+    playLink: "https_//drive.google.com/..../the_matrix_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../the_matrix_4k_download.mkv", size: "7.5GB" },
+      q1080p: { link: "https_//.../the_matrix_1080p_download.mkv", size: "3.8GB" },
+      q720p: { link: "https_//.../the_matrix_720p_download.mkv", size: "1.8GB" },
+      q480p: { link: "https_//.../the_matrix_480p_download.mkv", size: "950MB" }
+    }
+  },
+
+  // Movie 6
+  {
+    title: "The Lord of the Rings: The Fellowship of the Ring",
+    year: "2001",
+    rating: "8.8",
+    genre: "adventure fantasy action",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    trailer: "https://www.youtube.com/watch?v=V75dMMIW2B4",
+    description: "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+    playLink: "https_//drive.google.com/..../lotr_fellowship_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../lotr_fellowship_4k_download.mkv", size: "11.5GB" },
+      q1080p: { link: "https_//.../lotr_fellowship_1080p_download.mkv", size: "5.8GB" },
+      q720p: { link: "https_//.../lotr_fellowship_720p_download.mkv", size: "3.1GB" },
+      q480p: { link: "https_//.../lotr_fellowship_480p_download.mkv", size: "1.9GB" }
+    }
+  },
+  
+  // Movie 7
+  {
+    title: "Fight Club",
+    year: "1999",
+    rating: "8.8",
+    genre: "drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/pB8uzK9zFdsIbLw9LswbyrEGtBr.jpg",
+    trailer: "https://www.youtube.com/watch?v=SUXWAEX2jlg",
+    description: "An insomniac office worker looking for a way to change his life crosses paths with a devil-may-care soap maker and they form an underground fight club that evolves into something much, much more.",
+    playLink: "https_//drive.google.com/..../fight_club_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../fight_club_4k_download.mkv", size: "7.9GB" },
+      q1080p: { link: "https_//.../fight_club_1080p_download.mkv", size: "3.9GB" },
+      q720p: { link: "https_//.../fight_club_720p_download.mkv", size: "2.0GB" },
+      q480p: { link: "https_//.../fight_club_480p_download.mkv", size: "1.1GB" }
+    }
+  },
+
+  // Movie 8
+  {
+    title: "Joker",
+    year: "2019",
+    rating: "8.4",
+    genre: "crime drama thriller",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg",
+    trailer: "https://www.youtube.com/watch?v=zAGVQLHvwOY",
+    description: "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime. This path brings him face-to-face with his alter-ego: the Joker.",
+    playLink: "https_//drive.google.com/..../joker_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../joker_4k_download.mkv", size: "7.2GB" },
+      q1080p: { link: "https_//.../joker_1080p_download.mkv", size: "3.5GB" },
+      q720p: { link: "https_//.../joker_720p_download.mkv", size: "1.7GB" },
+      q480p: { link: "https_//.../joker_480p_download.mkv", size: "980MB" }
+    }
+  },
+
+  // Movie 9
+  {
+    title: "Avengers: Endgame",
+    year: "2019",
+    rating: "8.4",
+    genre: "sci-fi action adventure",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
+    trailer: "https://www.youtube.com/watch?v=TcMBFSGVi1c",
+    description: "Adrift in space with no food or water, Tony Stark sends a message to Pepper Potts as his oxygen supply starts to dwindle. Meanwhile, the remaining Avengers -- Thor, Black Widow, Captain America and Bruce Banner -- must figure out a way to bring back their vanquished allies for an epic showdown with Thanos.",
+    playLink: "https_//drive.google.com/..../avengers_endgame_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../avengers_endgame_4k_download.mkv", size: "12.0GB" },
+      q1080p: { link: "https_//.../avengers_endgame_1080p_download.mkv", size: "6.1GB" },
+      q720p: { link: "https_//.../avengers_endgame_720p_download.mkv", size: "3.2GB" },
+      q480p: { link: "https_//.../avengers_endgame_480p_download.mkv", size: "2.0GB" }
+    }
+  },
+
+  // Movie 10
+  {
+    title: "Gladiator",
+    year: "2000",
+    rating: "8.5",
+    genre: "action adventure drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/ty8TGRS3ltCAGb7mCLo1mBeD6JG.jpg",
+    trailer: "https://www.youtube.com/watch?v=owK1qxDselE",
+    description: "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.",
+    playLink: "https_//drive.google.com/..../gladiator_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../gladiator_4k_download.mkv", size: "9.5GB" },
+      q1080p: { link: "https_//.../gladiator_1080p_download.mkv", size: "4.8GB" },
+      q720p: { link: "https_//.../gladiator_720p_download.mkv", size: "2.4GB" },
+      q480p: { link: "https_//.../gladiator_480p_download.mkv", size: "1.4GB" }
+    }
+  }
+                    ],
+                    bollywood: [
+                        
+  // Movie 1
+  {
+    title: "3 Idiots",
+    year: "2009",
+    rating: "8.4",
+    genre: "comedy drama coming-of-age",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/bWc330X8B6K1te1R3bBwOAU3s2x.jpg",
+    trailer: "https://www.youtube.com/watch?v=K0e-dQlcx-M",
+    description: "Two friends are searching for their long lost companion. They revisit their college days and recall the memories of their friend who inspired them to think differently, even as the rest of the world called them 'idiots'.",
+    playLink: "https_//drive.google.com/..../3_idiots_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../3_idiots_4k_download.mkv", size: "9.0GB" },
+      q1080p: { link: "https_//.../3_idiots_1080p_download.mkv", size: "4.5GB" },
+      q720p: { link: "https_//.../3_idiots_720p_download.mkv", size: "2.5GB" },
+      q480p: { link: "https_//.../3_idiots_480p_download.mkv", size: "1.5GB" }
+    }
+  },
+
+  // Movie 2
+  {
+    title: "Dangal",
+    year: "2016",
+    rating: "8.4",
+    genre: "biography drama sport",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/p2oeE4iG232TGWl93e2b2mK2RSm.jpg",
+    trailer: "https://www.youtube.com/watch?v=x_7YlGv9u1g",
+    description: "Former wrestler Mahavir Singh Phogat and his two wrestler daughters struggle towards glory at the Commonwealth Games in the face of societal oppression.",
+    playLink: "https_//drive.google.com/..../dangal_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../dangal_4k_download.mkv", size: "8.8GB" },
+      q1080p: { link: "https_//.../dangal_1080p_download.mkv", size: "4.3GB" },
+      q720p: { link: "https_//.../dangal_720p_download.mkv", size: "2.2GB" },
+      q480p: { link: "https_//.../dangal_480p_download.mkv", size: "1.3GB" }
+    }
+  },
+
+  // Movie 3
+  {
+    title: "Sholay",
+    year: "1975",
+    rating: "8.1",
+    genre: "action adventure comedy",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/gZL439i2nfo2pB0Y923577dY1QE.jpg",
+    trailer: "https://www.youtube.com/watch?v=yvXkCNKFrgg",
+    description: "After his family is murdered by a notorious and ruthless bandit, a former police officer enlists the services of two outlaws to capture him.",
+    playLink: "https_//drive.google.com/..../sholay_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../sholay_4k_download.mkv", size: "10.1GB" },
+      q1080p: { link: "https_//.../sholay_1080p_download.mkv", size: "5.2GB" },
+      q720p: { link: "https_//.../sholay_720p_download.mkv", size: "2.8GB" },
+      q480p: { link: "https_//.../sholay_480p_download.mkv", size: "1.8GB" }
+    }
+  },
+
+  // Movie 4
+  {
+    title: "Dilwale Dulhania Le Jayenge",
+    year: "1995",
+    rating: "8.0",
+    genre: "romance drama comedy",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/2CAL2433ZeIihfX1Hb2139CX0pW.jpg",
+    trailer: "https://www.youtube.com/watch?v=c25GKl5VNeY",
+    description: "When Raj and Simran first met on an inter-rail holiday in Europe, it wasn't exactly Love at first sight but when Simran is taken back to India for an arranged marriage, things change.",
+    playLink: "https_//drive.google.com/..../ddlj_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../ddlj_4k_download.mkv", size: "9.5GB" },
+      q1080p: { link: "https_//.../ddlj_1080p_download.mkv", size: "4.9GB" },
+      q720p: { link: "https_//.../ddlj_720p_download.mkv", size: "2.6GB" },
+      q480p: { link: "https_//.../ddlj_480p_download.mkv", size: "1.6GB" }
+    }
+  },
+
+  // Movie 5
+  {
+    title: "Gangs of Wasseypur",
+    year: "2012",
+    rating: "8.2",
+    genre: "action crime drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/v9QAB8q1iQnZ2R3t5p0gpiC51f.jpg",
+    trailer: "https://www.youtube.com/watch?v=j-AkWDkXcMY",
+    description: "A clash between Sultan and Shahid Khan leads to the expulsion of Khan from Wasseypur, and ignites a deadly blood feud spanning three generations.",
+    playLink: "https_//drive.google.com/..../gangs_of_wasseypur_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../gangs_of_wasseypur_4k_download.mkv", size: "8.5GB" },
+      q1080p: { link: "https_//.../gangs_of_wasseypur_1080p_download.mkv", size: "4.2GB" },
+      q720p: { link: "https_//.../gangs_of_wasseypur_720p_download.mkv", size: "2.1GB" },
+      q480p: { link: "https_//.../gangs_of_wasseypur_480p_download.mkv", size: "1.2GB" }
+    }
+  },
+
+  // Movie 6
+  {
+    title: "Zindagi Na Milegi Dobara",
+    year: "2011",
+    rating: "8.2",
+    genre: "comedy drama adventure",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/2S4e5T5j00yP5KJpChK6uLTAw8f.jpg",
+    trailer: "https://www.youtube.com/watch?v=BQRi4z1Kq98",
+    description: "Three friends decide to turn their fantasy vacation into reality after one of them becomes engaged. A road trip in Spain changes their perceptions of life.",
+    playLink: "https_//drive.google.com/..../znmd_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../znmd_4k_download.mkv", size: "8.1GB" },
+      q1080p: { link: "https_//.../znmd_1080p_download.mkv", size: "4.0GB" },
+      q720p: { link: "https_//.../znmd_720p_download.mkv", size: "2.0GB" },
+      q480p: { link: "https_//.../znmd_480p_download.mkv", size: "1.1GB" }
+    }
+  },
+  
+  // Movie 7
+  {
+    title: "Andhadhun",
+    year: "2018",
+    rating: "8.2",
+    genre: "crime thriller comedy",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/iS149Q3sM9a3Q25I620t2IqAb80.jpg",
+    trailer: "https://www.youtube.com/watch?v=2iVYI99VGaw",
+    description: "A series of mysterious events change the life of a blind pianist, who must now report a crime that he should technically not know about.",
+    playLink: "https_//drive.google.com/..../andhadhun_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../andhadhun_4k_download.mkv", size: "7.7GB" },
+      q1080p: { link: "https_//.../andhadhun_1080p_download.mkv", size: "3.8GB" },
+      q720p: { link: "https_//.../andhadhun_720p_download.mkv", size: "1.9GB" },
+      q480p: { link: "https_//.../andhadhun_480p_download.mkv", size: "1.0GB" }
+    }
+  },
+
+  // Movie 8
+  {
+    title: "Lagaan: Once Upon a Time in India",
+    year: "2001",
+    rating: "8.1",
+    genre: "drama musical sport",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/w5pMX3fqlP6IhzZiytpYy4uIu8I.jpg",
+    trailer: "https://www.youtube.com/watch?v=oSIGQ0M_s5M",
+    description: "The people of a small village in Victorian India stake their future on a game of cricket against their ruthless British rulers.",
+    playLink: "https_//drive.google.com/..../lagaan_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../lagaan_4k_download.mkv", size: "11.0GB" },
+      q1080p: { link: "https_//.../lagaan_1080p_download.mkv", size: "5.5GB" },
+      q720p: { link: "https_//.../lagaan_720p_download.mkv", size: "3.0GB" },
+      q480p: { link: "https_//.../lagaan_480p_download.mkv", size: "2.1GB" }
+    }
+  },
+
+  // Movie 9
+  {
+    title: "Barfi!",
+    year: "2012",
+    rating: "8.1",
+    genre: "comedy drama romance",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/w0lT4SgCa2yGGwLboT2bKYU52j9.jpg",
+    trailer: "https://www.youtube.com/watch?v=yZxrao3U_4I",
+    description: "Three young people learn that love can neither be defined nor contained by society's definition of normal and abnormal. The story follows a hearing and speech-impaired man, Barfi, and his relationships with two women.",
+    playLink: "https_//drive.google.com/..../barfi_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../barfi_4k_download.mkv", size: "8.3GB" },
+      q1080p: { link: "https_//.../barfi_1080p_download.mkv", size: "4.1GB" },
+      q720p: { link: "https_//.../barfi_720p_download.mkv", size: "2.2GB" },
+      q480p: { link: "https_//.../barfi_480p_download.mkv", size: "1.2GB" }
+    }
+  },
+
+  // Movie 10
+  {
+    title: "My Name Is Khan",
+    year: "2010",
+    rating: "7.9",
+    genre: "drama romance",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/rDxdnPYO6j3ayr4eQcTrMhOrTq6.jpg",
+    trailer: "https://www.youtube.com/watch?v=JbTS_G_h5Qo",
+    description: "An Indian man with Asperger's syndrome takes a challenge to speak to the President of the United States, and embarks on a cross-country journey.",
+    playLink: "https_//drive.google.com/..../my_name_is_khan_play_link.mp4",
+    
+    downloadLinks: {
+      q4k: { link: "https_//.../my_name_is_khan_4k_download.mkv", size: "8.9GB" },
+      q1080p: { link: "https_//.../my_name_is_khan_1080p_download.mkv", size: "4.4GB" },
+      q720p: { link: "https_//.../my_name_is_khan_720p_download.mkv", size: "2.3GB" },
+      q480p: { link: "https_//.../my_name_is_khan_480p_download.mkv", size: "1.4GB" }
+    }
+  }
+                    ],
+                    southIndian: [
+  {
+    title: "Pushpa: The Rise",
+    year: "2021",
+    rating: "7.6",
+    genre: "action crime drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/2J1Nf3K1pF0W7QO5q6t5T0NnZxO.jpg",
+    trailer: "https://www.youtube.com/watch?v=Q1NKMPhP8PY",
+    description: "A labourer rises through the ranks of a red sandalwood smuggling syndicate, making enemies along the way.",
+    playLink: "https_//drive.google.com/.../pushpa_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../pushpa_4k.mkv", size: "9.2GB" },
+      q1080p: { link: "https_//.../pushpa_1080p.mkv", size: "4.7GB" },
+      q720p: { link: "https_//.../pushpa_720p.mkv", size: "2.5GB" },
+      q480p: { link: "https_//.../pushpa_480p.mkv", size: "1.2GB" }
+    }
+  },
+  {
+    title: "KGF: Chapter 2",
+    year: "2022",
+    rating: "8.4",
+    genre: "action drama thriller",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/7I7e6k6XJ1Rr3Z9xQDd0O9LpPHF.jpg",
+    trailer: "https://www.youtube.com/watch?v=Qah9sSIXJqk",
+    description: "Rocky battles his enemies and consolidates his power as the king of the Kolar Gold Fields.",
+    playLink: "https_//drive.google.com/.../kgf2_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../kgf2_4k.mkv", size: "10.5GB" },
+      q1080p: { link: "https_//.../kgf2_1080p.mkv", size: "5.1GB" },
+      q720p: { link: "https_//.../kgf2_720p.mkv", size: "2.8GB" },
+      q480p: { link: "https_//.../kgf2_480p.mkv", size: "1.5GB" }
+    }
+  },
+  {
+    title: "RRR",
+    year: "2022",
+    rating: "7.9",
+    genre: "action drama history",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/5mFXrA3nK8G2OyVZq5QbP1UEx9b.jpg",
+    trailer: "https://www.youtube.com/watch?v=OsDaV7ZzN8A",
+    description: "A fictional story about two Indian revolutionaries who fought against British colonial rule.",
+    playLink: "https_//drive.google.com/.../rrr_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../rrr_4k.mkv", size: "11.3GB" },
+      q1080p: { link: "https_//.../rrr_1080p.mkv", size: "5.6GB" },
+      q720p: { link: "https_//.../rrr_720p.mkv", size: "3.1GB" },
+      q480p: { link: "https_//.../rrr_480p.mkv", size: "1.7GB" }
+    }
+  },
+  {
+    title: "Vikram",
+    year: "2022",
+    rating: "8.4",
+    genre: "action thriller crime",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/5kAGbi9MzcB4E8q4aZPkG4nHxXe.jpg",
+    trailer: "https://www.youtube.com/watch?v=OKBMCL-frPU",
+    description: "A high-octane action thriller where a black-ops squad takes on a drug cartel.",
+    playLink: "https_//drive.google.com/.../vikram_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../vikram_4k.mkv", size: "9.8GB" },
+      q1080p: { link: "https_//.../vikram_1080p.mkv", size: "4.9GB" },
+      q720p: { link: "https_//.../vikram_720p.mkv", size: "2.6GB" },
+      q480p: { link: "https_//.../vikram_480p.mkv", size: "1.4GB" }
+    }
+  },
+  {
+    title: "Baahubali 2: The Conclusion",
+    year: "2017",
+    rating: "8.2",
+    genre: "action drama epic",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/yL9vhzQ8xU2L0Dv2B1S9stl9f6b.jpg",
+    trailer: "https://www.youtube.com/watch?v=G62HrubdD6o",
+    description: "The epic conclusion to the battle for the kingdom of Mahishmati.",
+    playLink: "https_//drive.google.com/.../baahubali2_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../baahubali2_4k.mkv", size: "12.1GB" },
+      q1080p: { link: "https_//.../baahubali2_1080p.mkv", size: "6.3GB" },
+      q720p: { link: "https_//.../baahubali2_720p.mkv", size: "3.4GB" },
+      q480p: { link: "https_//.../baahubali2_480p.mkv", size: "1.9GB" }
+    }
+  },
+  {
+    title: "Kantara",
+    year: "2022",
+    rating: "8.6",
+    genre: "action thriller fantasy",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/8ZJ7LrLXQ6Aag1Q3a9gXZ4hQ7wK.jpg",
+    trailer: "https://www.youtube.com/watch?v=G62HrubdD6o",
+    description: "A man battles between tradition and greed in a village where gods and spirits intervene.",
+    playLink: "https_//drive.google.com/.../kantara_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../kantara_4k.mkv", size: "8.7GB" },
+      q1080p: { link: "https_//.../kantara_1080p.mkv", size: "4.2GB" },
+      q720p: { link: "https_//.../kantara_720p.mkv", size: "2.3GB" },
+      q480p: { link: "https_//.../kantara_480p.mkv", size: "1.1GB" }
+    }
+  },
+  {
+    title: "Salaar: Part 1 - Ceasefire",
+    year: "2023",
+    rating: "7.8",
+    genre: "action crime drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/2J1Nf3K1pF0W7QO5q6t5T0NnZxO.jpg",
+    trailer: "https://www.youtube.com/watch?v=Q1NKMPhP8PY",
+    description: "A violent gang leader is forced to confront his past when his friend becomes a rival.",
+    playLink: "https_//drive.google.com/.../salaar_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../salaar_4k.mkv", size: "10.8GB" },
+      q1080p: { link: "https_//.../salaar_1080p.mkv", size: "5.4GB" },
+      q720p: { link: "https_//.../salaar_720p.mkv", size: "2.9GB" },
+      q480p: { link: "https_//.../salaar_480p.mkv", size: "1.6GB" }
+    }
+  },
+  {
+    title: "Jawan",
+    year: "2023",
+    rating: "7.5",
+    genre: "action thriller",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/7I7e6k6XJ1Rr3Z9xQDd0O9LpPHF.jpg",
+    trailer: "https://www.youtube.com/watch?v=Qah9sSIXJqk",
+    description: "A man seeks justice against a corrupt system while battling his own past.",
+    playLink: "https_//drive.google.com/.../jawan_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../jawan_4k.mkv", size: "9.5GB" },
+      q1080p: { link: "https_//.../jawan_1080p.mkv", size: "4.8GB" },
+      q720p: { link: "https_//.../jawan_720p.mkv", size: "2.6GB" },
+      q480p: { link: "https_//.../jawan_480p.mkv", size: "1.3GB" }
+    }
+  },
+  {
+    title: "Leo",
+    year: "2023",
+    rating: "7.9",
+    genre: "action crime thriller",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/5mFXrA3nK8G2OyVZq5QbP1UEx9b.jpg",
+    trailer: "https://www.youtube.com/watch?v=OsDaV7ZzN8A",
+    description: "A cafe owner's peaceful life is shattered when his dark past catches up with him.",
+    playLink: "https_//drive.google.com/.../leo_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../leo_4k.mkv", size: "10.1GB" },
+      q1080p: { link: "https_//.../leo_1080p.mkv", size: "5.0GB" },
+      q720p: { link: "https_//.../leo_720p.mkv", size: "2.7GB" },
+      q480p: { link: "https_//.../leo_480p.mkv", size: "1.5GB" }
+    }
+  },
+  {
+    title: "Ponniyin Selvan: Part 1",
+    year: "2022",
+    rating: "7.6",
+    genre: "historical drama",
+    quality: "4k",
+    image: "https://image.tmdb.org/t/p/w500/5kAGbi9MzcB4E8q4aZPkG4nHxXe.jpg",
+    trailer: "https://www.youtube.com/watch?v=OKBMCL-frPU",
+    description: "A historical epic about the early life of the Chola prince Arulmozhivarman.",
+    playLink: "https_//drive.google.com/.../ps1_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../ps1_4k.mkv", size: "11.2GB" },
+      q1080p: { link: "https_//.../ps1_1080p.mkv", size: "5.5GB" },
+      q720p: { link: "https_//.../ps1_720p.mkv", size: "3.0GB" },
+      q480p: { link: "https_//.../ps1_480p.mkv", size: "1.7GB" }
+    }
+  }
+                    ],
+                    tvShows: [
+                        
+  
+  {
+    title: "Breaking Bad",
+    year: "2008–2013",
+    rating: "9.5",
+    genre: "crime drama",
+    quality: "4k",
+    image: "https://.../breaking_bad_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=VaOt6tXyf2Y",
+    description: "A high school chemistry teacher diagnosed with terminal lung cancer partners with a former student to produce and distribute methamphetamine, transforming into the notorious drug lord Heisenberg.",
+    playLink: "https_//drive.google.com/.../breakingbad_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../breakingbad_4k.mkv", size: "9GB" },
+      q1080p: { link: "https_//.../breakingbad_1080p.mkv", size: "4.5GB" },
+      q720p: { link: "https_//.../breakingbad_720p.mkv", size: "2.2GB" },
+      q480p: { link: "https_//.../breakingbad_480p.mkv", size: "1.2GB" }
+    }
+  },
+  {
+    title: "Game of Thrones",
+    year: "2011–2019",
+    rating: "9.2",
+    genre: "fantasy drama",
+    quality: "4k",
+    image: "https://.../game_of_thrones_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=KPLWWIOCOOQ",
+    description: "Noble families vie for control of the Iron Throne and the Seven Kingdoms, amid icy threats beyond the Wall and shifting alliances.",
+    playLink: "https_//drive.google.com/.../got_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../got_4k.mkv", size: "10GB" },
+      q1080p: { link: "https_//.../got_1080p.mkv", size: "5GB" },
+      q720p: { link: "https_//.../got_720p.mkv", size: "2.5GB" },
+      q480p: { link: "https_//.../got_480p.mkv", size: "1.2GB" }
+    }
+  },
+  {
+    title: "Stranger Things",
+    year: "2016–",
+    rating: "8.7",
+    genre: "sci-fi horror",
+    quality: "4k",
+    image: "https://.../stranger_things_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=b9EkMc79ZSU",
+    description: "A group of kids in the 1980s uncover secret government experiments, supernatural forces, and a dark parallel world.",
+    playLink: "https_//drive.google.com/.../strangerthings_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../strangerthings_4k.mkv", size: "8GB" },
+      q1080p: { link: "https_//.../strangerthings_1080p.mkv", size: "4GB" },
+      q720p: { link: "https_//.../strangerthings_720p.mkv", size: "2GB" },
+      q480p: { link: "https_//.../strangerthings_480p.mkv", size: "1GB" }
+    }
+  },
+  {
+    title: "The Wire",
+    year: "2002–2008",
+    rating: "9.3",
+    genre: "crime drama",
+    quality: "1080p",
+    image: "https://.../the_wire_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=HqF3VnjUqMg",
+    description: "A realistic exploration of the Baltimore drug scene through the eyes of both law enforcers and drug dealers.",
+    playLink: "https_//drive.google.com/.../thewire_play.mp4",
+    downloadLinks: {
+      q1080p: { link: "https_//.../thewire_1080p.mkv", size: "3.8GB" },
+      q720p: { link: "https_//.../thewire_720p.mkv", size: "2GB" },
+      q480p: { link: "https_//.../thewire_480p.mkv", size: "1.1GB" }
+    }
+  },
+  {
+    title: "Chernobyl",
+    year: "2019",
+    rating: "9.4",
+    genre: "historical drama",
+    quality: "4k",
+    image: "https://.../chernobyl_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=s9APLXM9Ei8",
+    description: "A dramatization of the catastrophic nuclear accident in 1986 Soviet Union and the cleanup efforts that followed.",
+    playLink: "https_//drive.google.com/.../chernobyl_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../chernobyl_4k.mkv", size: "7GB" },
+      q1080p: { link: "https_//.../chernobyl_1080p.mkv", size: "3.5GB" },
+      q720p: { link: "https_//.../chernobyl_720p.mkv", size: "1.8GB" },
+      q480p: { link: "https_//.../chernobyl_480p.mkv", size: "900MB" }
+    }
+  },
+  {
+    title: "The Sopranos",
+    year: "1999–2007",
+    rating: "9.2",
+    genre: "crime drama",
+    quality: "1080p",
+    image: "https://.../the_sopranos_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=7LAYkQRX-tc",
+    description: "New Jersey mob boss Tony Soprano struggles to balance the demands of his crime family with those of his personal life.",
+    playLink: "https_//drive.google.com/.../sopranos_play.mp4",
+    downloadLinks: {
+      q1080p: { link: "https_//.../sopranos_1080p.mkv", size: "4GB" },
+      q720p: { link: "https_//.../sopranos_720p.mkv", size: "2.1GB" },
+      q480p: { link: "https_//.../sopranos_480p.mkv", size: "1.1GB" }
+    }
+  },
+  {
+    title: "Dexter",
+    year: "2006–2013",
+    rating: "8.6",
+    genre: "crime thriller",
+    quality: "1080p",
+    image: "https://.../dexter_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=zODlYh-gKuM",
+    description: "A Miami-based blood splatter expert leads a secret life as a vigilante serial killer, targeting criminals who escape justice.",
+    playLink: "https_//drive.google.com/.../dexter_play.mp4",
+    downloadLinks: {
+      q1080p: { link: "https_//.../dexter_1080p.mkv", size: "3.7GB" },
+      q720p: { link: "https_//.../dexter_720p.mkv", size: "2GB" },
+      q480p: { link: "https_//.../dexter_480p.mkv", size: "1.1GB" }
+    }
+  },
+  {
+    title: "Rick and Morty",
+    year: "2013–",
+    rating: "9.0",
+    genre: "animated sci-fi comedy",
+    quality: "1080p",
+    image: "https://.../rick_and_morty_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=2Oco5xjKifA",
+    description: "An eccentric scientist and his fretful grandson embark on dangerous, outlandish adventures across the cosmos and alternate realities.",
+    playLink: "https_//drive.google.com/.../rickmorty_play.mp4",
+    downloadLinks: {
+      q1080p: { link: "https_//.../rickmorty_1080p.mkv", size: "4GB" },
+      q720p: { link: "https_//.../rickmorty_720p.mkv", size: "2GB" },
+      q480p: { link: "https_//.../rickmorty_480p.mkv", size: "1.2GB" }
+    }
+  },
+  {
+    title: "Succession",
+    year: "2018–2024",
+    rating: "8.8",
+    genre: "drama satirical",
+    quality: "4k",
+    image: "https://.../succession_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=XYaNXtHV0N4",
+    description: "A power struggle ensues within a dysfunctional family that controls a global media empire.",
+    playLink: "https_//drive.google.com/.../succession_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../succession_4k.mkv", size: "6GB" },
+      q1080p: { link: "https_//.../succession_1080p.mkv", size: "3GB" },
+      q720p: { link: "https_//.../succession_720p.mkv", size: "1.5GB" },
+      q480p: { link: "https_//.../succession_480p.mkv", size: "800MB" }
+    }
+  },
+  {
+    title: "Severance",
+    year: "2022–",
+    rating: "8.7",
+    genre: "sci-fi thriller",
+    quality: "4k",
+    image: "https://.../severance_poster.jpg",
+    trailer: "https://www.youtube.com/watch?v=Y-JoX5KgJnY",
+    description: "Employees at a mysterious corporation undergo a procedure that separates their work memories from their personal memories, leading to unsettling consequences.",
+    playLink: "https_//drive.google.com/.../severance_play.mp4",
+    downloadLinks: {
+      q4k: { link: "https_//.../severance_4k.mkv", size: "7GB" },
+      q1080p: { link: "https_//.../severance_1080p.mkv", size: "3.5GB" },
+      q720p: { link: "https_//.../severance_720p.mkv", size: "1.8GB" },
+      q480p: { link: "https_//.../severance_480p.mkv", size: "1GB" }
+    }
+  }
+
+
+                    ],
+                    hindiDubbed: [
+                        { title: "Avengers: Endgame (Hindi)", year: "2019", rating: "8.4", genre: "action sci-fi adventure", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/O_iI0H6kC5g", description: "After the devastating events of Infinity War, the remaining Avengers must assemble once more to reverse Thanos' actions and restore balance to the universe." },
+                        { title: "Avatar: The Way of Water (Hindi)", year: "2022", rating: "7.6", genre: "action adventure fantasy", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1MDIzXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/yP79sVE2olE", description: "Jake Sully and Ney'tiri have formed a family and are doing everything to stay together. However, they must leave their home and explore the regions of Pandora." },
+                        { title: "Joker (Hindi)", year: "2019", rating: "8.4", genre: "crime drama thriller", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/coY22jJ_n-E", description: "A mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime." },
+                        { title: "Spider-Man: No Way Home (Hindi)", year: "2021", rating: "8.2", genre: "action adventure fantasy", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/pBvH5hP62yM", description: "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear." },
+                        { title: "Inception (Hindi)", year: "2010", rating: "8.8", genre: "action adventure sci-fi", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/R_0-f-WdJb0", description: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into a C.E.O.'s mind." }
+                    ],
+                    restricted: [
+                        { title: "Fifty Shades of Grey", year: "2015", rating: "4.1", genre: "drama romance", quality: "hd", image: "https://m.media-amazon.com/images/M/MV5BMTQ1MTA0MjE1OF5BMl5BanBnXkFtZTgwNTU2NTY4MzE@._V1_.jpg", trailer: "https://www.youtube.com/embed/SfZWFDs0LxA", description: "Literature student Anastasia Steele's life changes forever when she meets handsome, yet tormented, billionaire Christian Grey." },
+                        { title: "The Wolf of Wall Street", year: "2013", rating: "8.2", genre: "biography crime drama", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/iszwuX1AK6A", description: "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government." },
+                        { title: "John Wick", year: "2014", rating: "7.4", genre: "action crime thriller", quality: "4k", image: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI4MjE@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/C0BMx-qxsP4", description: "An ex-hitman comes out of retirement to track down the gangsters that took everything from him." },
+                        { title: "American Psycho", year: "2000", rating: "7.6", genre: "crime drama horror", quality: "hd", image: "https://m.media-amazon.com/images/M/MV5BZTM2ZGJlMDQtN2I5MC00MTQ2LWI0MTVjLWE0OTBiN2QxNzMyY1V1XkEyXkFqcGdeQXVyNTc2MDU0NDE@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/5YnGhW4UEhc", description: "A wealthy New York City investment banking executive hides his alternate psychopathic ego from his co-workers and friends as he delves deeper into his violent, hedonistic fantasies." },
+                        { title: "Kill Bill: Vol. 1", year: "2003", rating: "8.2", genre: "action crime drama", quality: "hd", image: "https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg", trailer: "https://www.youtube.com/embed/7kSuas6mRpk", description: "After awakening from a four-year coma, a former assassin wreaks vengeance on the team of assassins who betrayed her." }
+                    ]
+                };
+                appState.isLoading = false;
+                renderAllMovies();
+                animateSections();
+                hidePreloader();
+            }, 2000); 
+        }
+
+        // Render all movie sections
+        function renderAllMovies() {
+            renderTrendingMovies();
+            renderMovieGrid('hollywoodGrid', appState.moviesData.hollywood);
+            renderMovieGrid('bollywoodGrid', appState.moviesData.bollywood);
+            renderMovieGrid('southIndianGrid', appState.moviesData.southIndian);
+            renderMovieGrid('tvShowsGrid', appState.moviesData.tvShows);
+            renderMovieGrid('hindiDubbedGrid', appState.moviesData.hindiDubbed);
+            renderMovieGrid('restrictedGrid', appState.moviesData.restricted, true);
+        }
+
+        // *** NAYI FUNCTION: Render Hero Slider ***
+        function renderHeroSlider() {
+            if (!DOM.heroSwiperWrapper) return;
+            DOM.heroSwiperWrapper.innerHTML = '';
+            
+            appState.featuredMovies.forEach(movie => {
+                const slideHTML = `
+                    <div class="swiper-slide">
+                        <img src="${movie.image}" alt="${movie.title}" class="featured-bg-image">
+                        <div class="featured-overlay"></div>
+                        <div class="hero-slide-content">
+                            <h3 class="hero-subtitle">${movie.subtitle}</h3>
+                            <h2 class="hero-main-title">${movie.title}</h2>
+                            <div class="hero-meta">
+                                <span>${movie.year}</span>
+                                <span>&bull;</span>
+                                <span>${movie.genres}</span>
+                                <span>&bull;</span>
+                                <span class="quality-tag">${movie.quality}</span>
+                            </div>
+                            <p class="hero-description">${movie.description}</p>
+                            <div class="hero-buttons">
+                                <a href="#" class="btn-hero btn-hero-primary"><i class="fas fa-play"></i> Watch Trailer</a>
+                                <a href="#" class="btn-hero btn-hero-secondary"><i class="fas fa-info-circle"></i> More Info</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                DOM.heroSwiperWrapper.innerHTML += slideHTML;
+            });
+        }
+
+        // Render trending movies carousel
+        function renderTrendingMovies() {
+            DOM.trendingSwiperWrapper.innerHTML = '';
+            appState.moviesData.trending.forEach(movie => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                const genres = movie.genre.split(' ').map(g => g.charAt(0).toUpperCase() + g.slice(1)).join(', ');
+                
+                slide.innerHTML = `
+                    <img src="${movie.image}" alt="${movie.title}" loading="lazy">
+                    <div class="slide-content">
+                        <h3 class="slide-title">${movie.title}</h3>
+                        <div class="slide-meta">
+                            <span class="slide-rating"><i class="fas fa-star"></i> ${movie.rating}</span>
+                            <span class="slide-year"><i class="fas fa-calendar"></i> ${movie.year}</span>
+                            <span class="slide-genre"><i class="fas fa-tag"></i> ${genres.split(',')[0]}</span>
+                        </div>
+                    </div>
+                `;
+                slide.addEventListener('click', () => openMovieModal(movie));
+                DOM.trendingSwiperWrapper.appendChild(slide);
+            });
+            initTrendingSwiper();
+        }
+
+        // *** NAYI FUNCTION: Initialize Hero Swiper ***
+        function initHeroSwiper() {
+            new Swiper('.hero-swiper', {
+                loop: true,
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                },
+                autoplay: {
+                    delay: 6000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.hero-pagination',
+                    clickable: true,
+                },
+                allowTouchMove: false // Disable manual slide for a more cinematic feel
+            });
+        }
+
+        // Initialize Trending Swiper
+        function initTrendingSwiper() {
+            new Swiper('.trending-carousel', {
+                slidesPerView: 'auto',
+                spaceBetween: 20,
+                loop: true,
+                centeredSlides: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.trending-carousel .swiper-pagination',
+                    clickable: true,
+                },
+                breakpoints: {
+                    768: { spaceBetween: 30 }
+                }
+            });
+        }
+
+        function renderMovieGrid(gridId, movies, isRestricted = false) {
+            const grid = document.getElementById(gridId);
+            grid.innerHTML = '';
+            movies.forEach(movie => {
+                const genres = movie.genre.split(' ').map(g => `<span class="genre-tag">${g.charAt(0).toUpperCase() + g.slice(1)}</span>`).join('');
+                const card = document.createElement('div');
+                card.className = `movie-card ${isRestricted ? 'warning' : ''}`;
+                card.dataset.title = movie.title.toLowerCase();
+                card.dataset.year = movie.year;
+                card.dataset.genre = movie.genre;
+                card.dataset.quality = movie.quality;
+                card.dataset.rating = movie.rating;
+                
+                card.innerHTML = `
+                    <img src="${movie.image}" alt="${movie.title}" class="movie-poster" loading="lazy">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-meta">
+                            <span class="movie-year">${movie.year}</span>
+                            <span class="movie-rating"><i class="fas fa-star"></i> ${movie.rating}</span>
+                        </div>
+                        <div class="movie-genres">${genres}</div>
+                        <div class="movie-actions">
+                            <button class="action-btn play"><i class="fas fa-play"></i> Play</button>
+                            <button class="action-btn details"><i class="fas fa-info-circle"></i> Details</button>
+                        </div>
+                    </div>`;
+                
+                card.addEventListener('click', () => openMovieModal(movie));
+                grid.appendChild(card);
+            });
+            
+            const cards = grid.querySelectorAll('.movie-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => card.classList.add('visible'), index * 100);
+            });
+        }
+
+        function filterMovies() {
+            updateFilters();
+            const { searchTerm, genres, years, qualities, showRestricted } = appState.filters;
+            let hasResults = false;
+
+            const grids = ['hollywoodGrid', 'bollywoodGrid', 'southIndianGrid', 'tvShowsGrid', 'hindiDubbedGrid', 'restrictedGrid'];
+            grids.forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                const cards = grid.querySelectorAll('.movie-card');
+                let gridHasResults = false;
+
+                cards.forEach(card => {
+                    const title = card.dataset.title;
+                    const year = card.dataset.year;
+                    const genre = card.dataset.genre;
+                    const quality = card.dataset.quality;
+                    const isRestricted = card.classList.contains('warning');
+
+                    if (isRestricted && !showRestricted) {
+                        card.style.display = 'none';
+                        return;
+                    }
+
+                    const matchesSearch = searchTerm === '' || title.includes(searchTerm);
+                    const matchesGenre = genres.length === 0 || genres.some(g => genre.includes(g));
+                    const matchesYear = years.length === 0 || years.includes(year);
+                    const matchesQuality = qualities.length === 0 || qualities.includes(quality);
+
+                    if (matchesSearch && matchesGenre && matchesYear && matchesQuality) {
+                        card.style.display = 'block';
+                        gridHasResults = true;
+                        hasResults = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                const section = grid.closest('section');
+                if (section) section.style.display = gridHasResults ? 'block' : 'none';
+            });
+            DOM.noResults.style.display = hasResults ? 'none' : 'block';
+        }
+
+function openMovieModal(movie) {
+    DOM.modalPoster.src = movie.image;
+    DOM.modalTitle.textContent = movie.title;
+    DOM.modalRating.innerHTML = `<i class="fas fa-star"></i> ${movie.rating}`;
+    DOM.modalYear.innerHTML = `<i class="fas fa-calendar"></i> ${movie.year}`;
+    DOM.modalQuality.innerHTML = `<i class="fas fa-film"></i> ${movie.quality.toUpperCase()}`;
+    
+    DOM.modalGenres.innerHTML = movie.genre.split(' ').map(g => `<span class="modal-genre">${g.charAt(0).toUpperCase() + g.slice(1)}</span>`).join('');
+    DOM.modalDescription.textContent = movie.description || 'No description available.';
+    DOM.modalTrailer.src = movie.trailer || '';
+    
+    // --- Links ko set karne wala naya logic ---
+
+    // Play Now Button
+    const playButtonContainer = DOM.movieModal.querySelector('.modal-actions');
+    const oldPlayButton = playButtonContainer.querySelector('.modal-btn.play');
+    if (oldPlayButton) oldPlayButton.remove(); // Purana button hatayein
+
+    if (movie.playLink && movie.playLink !== "#") {
+        const newPlayLink = document.createElement('a');
+        newPlayLink.href = movie.playLink;
+        newPlayLink.target = "_blank";
+        newPlayLink.className = "modal-btn play";
+        newPlayLink.innerHTML = `<i class="fas fa-play"></i> Play Now`;
+        playButtonContainer.prepend(newPlayLink); // Naya link button shuru mein lagayein
+    }
+    
+    // Download Buttons
+    const downloadGrid = document.getElementById('downloadOptionsGrid');
+    const qualities = {
+        q4k: '4K Ultra HD',
+        q1080p: '1080p Full HD',
+        q720p: '720p HD',
+        q480p: '480p SD'
+    };
+
+    for (const q in qualities) {
+        const optionContainer = downloadGrid.querySelector(`.download-option.${q}`);
+        
+        if (movie.downloadLinks && movie.downloadLinks[q] && movie.downloadLinks[q].link && movie.downloadLinks[q].link !== "#") {
+            const downloadBtn = optionContainer.querySelector('.download-btn');
+            const sizeText = optionContainer.querySelector('.download-size');
+            
+            downloadBtn.href = movie.downloadLinks[q].link;
+            sizeText.textContent = `Size: ${movie.downloadLinks[q].size || 'N/A'}`;
+            optionContainer.style.display = 'block';
+        } else {
+            optionContainer.style.display = 'none';
+        }
+    }
+
+    DOM.movieModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+        function closeMovieModal() {
+            DOM.movieModal.classList.remove('active');
+            DOM.modalTrailer.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeMovieModalOnOutsideClick(e) {
+            if (e.target === DOM.movieModal) {
+                closeMovieModal();
+            }
+        }
+
+        function animateSections() {
+            const sections = document.querySelectorAll('.section-title, .trending-carousel, .movie-grid, .no-results');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(section => observer.observe(section));
+        }
+
+        function hidePreloader() {
+            DOM.preloader.style.opacity = '0';
+            setTimeout(() => DOM.preloader.style.display = 'none', 800);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+```
